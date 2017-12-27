@@ -65,8 +65,8 @@ int main(int argc, char **argv)
     ROSCallbacks cb(&SLAM);
 
     ros::NodeHandle nodeHandler;
-    ros::Subscriber img_sub = nodeHandler.subscribe("/camera/rgb/image_raw", 1, &ROSCallbacks::ImageCb,&cb);
     ros::Subscriber odom_sub = nodeHandler.subscribe("/odom", 1, &ROSCallbacks::OdomCb,&cb);
+    ros::Subscriber img_sub = nodeHandler.subscribe("/camera/rgb/image_raw", 1, &ROSCallbacks::ImageCb,&cb);
     ros::Subscriber reset_sub = nodeHandler.subscribe("/ORB_SLAM2/Reset", 1, &ROSCallbacks::StringCb,&cb);
 
     ros::spin();

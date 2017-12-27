@@ -2,10 +2,11 @@
 <launch>
     <node name="orb_mono" pkg="ORB_SLAM2" type="orb_mono" 
   args="$(find ORB_SLAM2)/Vocabulary/ORBvoc.txt $(find ORB_SLAM2)/Settings.yaml" clear_params="true" respawn="false" output="screen" required="true">
-	    <remap from="/camera/image_raw" to="/camera/rgb/image_raw" />
+	    <remap from="/camera/rgb/image_raw" to="/bebop2/front/image_raw" />
+	    <remap from="/odom" to="/ground_truth/state" />
     </node>
 
-    <node pkg="image_view" type="image_view" name="image_view" respawn="false" output="log">
+    <node pkg="image_view" type="image_view" name="image_view_orb" respawn="false" output="log">
 	<remap from="/image" to="/ORB_SLAM2/Frame" />
 	<param name="autosize" value="true"/>
 	</node>

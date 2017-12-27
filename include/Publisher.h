@@ -43,7 +43,7 @@ public:
     Publisher(System* pSystem, FramePublisher* pFramePublisher, MapPublisher* pMapPublisher, Tracking *pTracking);
 
     // Main thread function. Draw points, keyframes, the current camera pose and the last processed
-    // frame. Drawing is refreshed according to the camera fps. We use Pangolin.
+    // frame. Drawing is refreshed according to the camera fps.
     void Run();
 
     void RequestFinish();

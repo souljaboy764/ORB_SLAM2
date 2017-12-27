@@ -26,7 +26,6 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <visualization_msgs/Marker.h>
 #include <boost/thread.hpp>
-#include <pangolin/pangolin.h>
 
 #include "Map.h"
 #include "MapPoint.h"

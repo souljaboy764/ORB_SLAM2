@@ -19,8 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(OpenCV REQUIRED)
-find_package(Eigen3 3.1.0 REQUIRED)
-find_package(Pangolin REQUIRED)
+#find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
 
 add_service_files(DIRECTORY srv
@@ -34,8 +33,8 @@ generate_messages(DEPENDENCIES std_msgs sensor_msgs)
 
 catkin_package(CATKIN_DEPENDS roscpp std_msgs sensor_msgs tf visualization_msgs cv_bridge message_runtime)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3 -march=native ")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3 -march=native -g")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -w -O3 -g -march=native ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w  -O3 -march=native -g -std=c++11")
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
@@ -55,15 +54,16 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-
+#MESSAGE("EIGEN PATH " ${EIGEN3_INCLUDE_DIR})
 
 
 include_directories(
 ${catkin_INCLUDE_DIRS}
+${OpenCV_INCLUDE_DIRS}
+#${EIGEN3_INCLUDE_DIR}
+${PROJECT_SOURCE_DIR}/Thirdparty/eigen3
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/include
-${EIGEN3_INCLUDE_DIR}
-${Pangolin_INCLUDE_DIRS}
 ${Boost_INCLUDE_DIRS}
 )
 
@@ -91,8 +91,7 @@ src/Publisher.cc
 
 target_link_libraries(${PROJECT_NAME}
 ${OpenCV_LIBS}
-${EIGEN3_LIBS}
-${Pangolin_LIBRARIES}
+#${EIGEN3_LIBS}
 ${Boost_LIBRARIES}
 ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
 ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
@@ -101,11 +100,13 @@ ${catkin_LIBRARIES}
 
 # Build examples
 add_executable(orb_mono src/ros_mono.cc)
-target_link_libraries(orb_mono ${PROJECT_NAME} ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(orb_mono ${PROJECT_NAME} ${catkin_LIBRARIES}  ${Boost_LIBRARIES} ${OpenCV_LIBS}
+#${EIGEN3_LIBS}
+)
 
 # add_executable(orb_stereo src/ros_stereo.cc)
-# target_link_libraries(orb_stereo ${PROJECT_NAME} ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+# target_link_libraries(orb_stereo ${PROJECT_NAME} ${catkin_LIBRARIES} ${EIGEN3_LIBS} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 
 # add_executable(orb_rgbd src/ros_rgbd.cc)
-# target_link_libraries(orb_rgbd ${PROJECT_NAME} ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+# target_link_libraries(orb_rgbd ${PROJECT_NAME} ${catkin_LIBRARIES} ${EIGEN3_LIBS} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 

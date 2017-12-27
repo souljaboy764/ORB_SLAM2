@@ -1,23 +1,23 @@
 %YAML:1.0
 
-MinOdomDist: 0.35
+MinOdomDist: 0.25
 
 #--------------------------------------------------------------------------------------------
 # Camera Parameters. Adjust them!
 #--------------------------------------------------------------------------------------------
 
 # Camera calibration and distortion parameters (OpenCV) 
-Camera.fx: 535.4
-Camera.fy: 539.2
-Camera.cx: 320.1
-Camera.cy: 247.6
+Camera.fx: 375.98849178826106
+Camera.fy: 375.98849178826106
+Camera.cx: 428.5
+Camera.cy: 240.5
 
 Camera.k1: 0.0
 Camera.k2: 0.0
 Camera.p1: 0.0
 Camera.p2: 0.0
 
-Camera.width: 640
+Camera.width: 856
 Camera.height: 480
 
 # Camera frames per second 

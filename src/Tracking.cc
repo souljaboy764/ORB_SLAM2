@@ -172,6 +172,8 @@ void Tracking::SetPublisher(Publisher *pPublisher)
 
 cv::Mat Tracking::GrabImageStereo(const cv::Mat &imRectLeft, const cv::Mat &imRectRight, const double &timestamp)
 {
+    
+
     mImGray = imRectLeft;
     cv::Mat imGrayRight = imRectRight;
 
@@ -205,7 +207,7 @@ cv::Mat Tracking::GrabImageStereo(const cv::Mat &imRectLeft, const cv::Mat &imRe
     mCurrentFrame = Frame(mImGray,imGrayRight,timestamp,mpORBextractorLeft,mpORBextractorRight,mpORBVocabulary,mK,mDistCoef,mbf,mThDepth);
 
     Track();
-
+    
     return mCurrentFrame.mTcw.clone();
 }
 
@@ -243,6 +245,7 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const d
 
 cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
 {
+
     mImGray = im;
 
     if(mImGray.channels()==3)
@@ -264,7 +267,7 @@ cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
         mCurrentFrame = Frame(mImGray,timestamp,mpIniORBextractor,mpORBVocabulary,mK,mDistCoef,mbf,mThDepth);
     else
         mCurrentFrame = Frame(mImGray,timestamp,mpORBextractorLeft,mpORBVocabulary,mK,mDistCoef,mbf,mThDepth);
-
+    
     Track();
 
     return mCurrentFrame.mTcw.clone();
@@ -279,8 +282,13 @@ void Tracking::Track()
 
     mLastProcessedState=mState;
 
+    struct timeval stTime,enTime;
+    gettimeofday(&stTime, NULL);
     // Get Map Mutex -> Map cannot be changed
     unique_lock<mutex> lock(mpMap->mMutexMapUpdate);
+                    gettimeofday(&enTime, NULL);
+    cout<<" time "<< ((enTime.tv_sec * 1000.0 + enTime.tv_usec/1000.0)
+              - (stTime.tv_sec * 1000.0 + stTime.tv_usec/1000.0))<<endl;
 
     if(mState==NOT_INITIALIZED)
     {
@@ -586,7 +594,11 @@ void Tracking::MonocularInitialization()
             mpInitializer =  new Initializer(mCurrentFrame,1.0,200);
 
             fill(mvIniMatches.begin(),mvIniMatches.end(),-1);
-            InitOdom = mpSystem->GetOdometry();
+            /*InitOdom = mpSystem->GetOdometry();
+            if(InitOdom!=NULL)
+                cout<<"InitOdom NOT NULL"<<endl;
+            else if(InitOdom==NULL)
+                cout<<"InitOdom NULL"<<endl;*/
             return;
         }
     }
@@ -618,7 +630,7 @@ void Tracking::MonocularInitialization()
         vector<bool> vbTriangulated; // Triangulated Correspondences (mvIniMatches)
         
         //If the distance moved is too small, scaling errors can occur
-        if(InitOdom)
+        /*if(InitOdom)
         {
             nav_msgs::OdometryPtr CurrOdom = mpSystem->GetOdometry();
 
@@ -627,7 +639,7 @@ void Tracking::MonocularInitialization()
                             +  (InitOdom->pose.pose.position.z - CurrOdom->pose.pose.position.z)*(InitOdom->pose.pose.position.z - CurrOdom->pose.pose.position.z));
             if(dist < mMinOdomDist)
                 return;   
-        }
+        }*/
         if(mpInitializer->Initialize(mCurrentFrame, mvIniMatches, Rcw, tcw, mvIniP3D, vbTriangulated))
         {
             for(size_t i=0, iend=mvIniMatches.size(); i<iend;i++)
@@ -704,16 +716,17 @@ void Tracking::CreateInitialMapMonocular()
 
     float invMedianDepth;
 
-    if(InitOdom)
+    /*if(InitOdom)
     {
         nav_msgs::OdometryPtr CurrOdom = mpSystem->GetOdometry();
 
         invMedianDepth = sqrt((InitOdom->pose.pose.position.x - CurrOdom->pose.pose.position.x)*(InitOdom->pose.pose.position.x - CurrOdom->pose.pose.position.x)
                         +  (InitOdom->pose.pose.position.y - CurrOdom->pose.pose.position.y)*(InitOdom->pose.pose.position.y - CurrOdom->pose.pose.position.y)
                         +  (InitOdom->pose.pose.position.z - CurrOdom->pose.pose.position.z)*(InitOdom->pose.pose.position.z - CurrOdom->pose.pose.position.z));
-    }
-    else
+    }*/
+    //else
     {
+     //   cout<<"no ODOM data"<<endl;
         float medianDepth = pKFini->ComputeSceneMedianDepth(2);  // Set median depth to 1
         invMedianDepth = 1.0f/medianDepth;
     }
